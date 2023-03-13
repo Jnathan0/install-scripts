@@ -57,9 +57,9 @@ version:
       default: latest
       latest:
         install: |-
-          curl -sS https://download.spotify.com/debian/pubkey_7A3A762FAFD4A51F.gpg | sudo gpg --dearmor --yes -o /etc/apt/trusted.gpg.d/spotify.gpg
-          echo "deb http://repository.spotify.com stable non-free" | sudo tee /etc/apt/sources.list.d/spotify.list
-          sudo apt-get update && sudo apt-get install -y spotify-client
+          wget -O- https://download.spotify.com/debian/pubkey.gpg | sudo apt-key add -
+          sudo add-apt-repository "deb http://repository.spotify.com stable non-free"
+          sudo apt install -y spotify-client
     python3:
       default: "3.10"
       "3.11":
