@@ -1,0 +1,15 @@
+python3:
+  version: "3.10"
+pip3:
+docker:
+iftop:
+build-essential:
+openssh-server:
+  post-install: |-
+    sudo systemctl enable ssh
+    sudo sysetmctl start ssh
+firefox:
+vscode:
+spotify:
+neofetch:
+htop:

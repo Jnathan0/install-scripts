@@ -1,0 +1,10 @@
+python3:
+  version: "3.10"
+  pre-install: |-
+    echo this is the pre install phase
+    echo we are installing shit here
+  post-install: |-
+    echo this is the post install phase
+    echo this gets evaluated after the main install for the dependency finishes
+spotify: # setting only the root key will install with the 'default' version
+

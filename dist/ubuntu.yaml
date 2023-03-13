@@ -1,0 +1,128 @@
+version:
+  "22.04":
+    docker:
+      default: latest
+      latest:
+        install: |
+          sudo apt-get remove docker docker-engine docker.io containerd runc
+          sudo apt-get update
+          sudo apt-get install -y \
+              ca-certificates \
+              curl \
+              gnupg \
+              lsb-release
+          sudo mkdir -m 0755 -p /etc/apt/keyrings
+          curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+          echo \
+            "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
+            $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+          sudo apt-get update
+          sudo apt-get install -y \
+            docker-ce \
+            docker-ce-cli \
+            containerd.io \
+            docker-buildx-plugin \
+            docker-compose-plugin
+    neofetch:
+      default: latest
+      latest:
+        install: |
+          sudo apt update
+          sudo apt -y install neofetch
+    htop:
+      default: latest
+      latest:
+        install: |
+          sudo apt update
+          sudo apt -y install htop
+    iftop:
+      default: latest
+      latest:
+        install: |
+          sudo apt update
+          sudo apt install -y iftop
+    vscode:
+      default: latest
+      latest:
+        install: |-
+          sudo apt install -y software-properties-common apt-transport-https wget
+          wget -q https://packages.microsoft.com/keys/microsoft.asc -O- | sudo apt-key add -y - 
+          sudo add-apt-repository "deb [arch=$(dpkg --print-architecture)] https://packages.microsoft.com/repos/vscode stable main"
+          sudo apt install -y code
+    spotify:
+      default: latest
+      latest:
+        install: |-
+          curl -sS https://download.spotify.com/debian/pubkey_7A3A762FAFD4A51F.gpg | sudo gpg --dearmor --yes -o /etc/apt/trusted.gpg.d/spotify.gpg
+          echo "deb http://repository.spotify.com stable non-free" | sudo tee /etc/apt/sources.list.d/spotify.list
+          sudo apt-get update && sudo apt-get install -y spotify-client
+    python3:
+      default: "3.10"
+      "3.11":
+        install: |-
+          sudo apt install -y software-properties-common
+          sudo add-apt-repository ppa:deadsnakes/ppa
+          sudo apt update
+          sudo apt install -y python3.11
+      "3.10":
+        install: |-
+          sudo apt install -y software-properties-common
+          sudo add-apt-repository ppa:deadsnakes/ppa
+          sudo apt update
+          sudo apt install -y python3.10
+      "3.9":
+        install: |-
+          sudo apt install -y software-properties-common
+          sudo add-apt-repository ppa:deadsnakes/ppa
+          sudo apt update
+          sudo apt install -y python3.9
+      "3.8":
+        install: |-
+          sudo apt install -y software-properties-common
+          sudo add-apt-repository ppa:deadsnakes/ppa
+          sudo apt update
+          sudo apt install -y python3.8
+      "3.7":
+        install: |-
+          sudo apt install -y software-properties-common
+          sudo add-apt-repository ppa:deadsnakes/ppa
+          sudo apt update
+          sudo apt install -y python3.7
+      "3.6":
+        install: |-
+          sudo apt install -y software-properties-common
+          sudo add-apt-repository ppa:deadsnakes/ppa
+          sudo apt update
+          sudo apt install -y python3.6
+    pip3:
+      default: latest
+      latest:
+        install: |-
+          sudo apt update
+          sudo apt install -y python3-pip
+    firefox:
+      default: latest
+      latest:
+        install: |- 
+          sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys A6DCF7707EBC211F
+          sudo apt-add-repository "deb http://ppa.launchpad.net/ubuntu-mozilla-security/ppa/ubuntu $(lsb_release -cs) main"
+          sudo apt update
+          sudo apt install -y firefox
+      nightly:
+        install: |-
+          sudo add-apt-repository ppa:ubuntu-mozilla-daily/ppa 
+          sudo apt update
+          sudo apt install -y firefox-trunk
+    build-essential:
+      default: latest
+      latest:
+        install: |-
+          sudo apt update 
+          sudo apt upgrade -y
+          sudo apt install -y build-essential
+    openssh-server:
+      default: latest
+      latest:
+        install: |-
+          sudo apt update
+          sudo apt install -y openssh-server
