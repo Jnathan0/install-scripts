@@ -7,7 +7,7 @@ build-essential:
 openssh-server:
   post-install: |-
     sudo systemctl enable ssh
-    sudo sysetmctl start ssh
+    sudo systemctl start ssh
 firefox:
 vscode:
 spotify:
