@@ -53,7 +53,7 @@ fi
 if [ $(type yq > /dev/null 2>&1; echo $?) != 0 ]
     then
         echo 'yq not found, installing...'
-        sudo wget https://github.com/mikefarah/yq/releases/latest/download/yq_linux_$(dpkg --print-architecture) -O /usr/bin/yq && \
+        wget https://github.com/mikefarah/yq/releases/latest/download/yq_linux_$(dpkg --print-architecture) -O /usr/bin/yq && \
             sudo chmod +x /usr/bin/yq
         echo "yq installed: $(yq --version | head -n 1)"
     else
