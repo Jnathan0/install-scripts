@@ -23,6 +23,14 @@ version:
             containerd.io \
             docker-buildx-plugin \
             docker-compose-plugin
+    discord:
+      default: latest
+      latest:
+        install: |
+          sudo apt update
+          sudo apt install -y gdebi-core wget
+          wget -O ~/discord.deb "https://discordapp.com/api/download?platform=linux&format=deb"
+          sudo gdebi ~/discord.deb 
     neofetch:
       default: latest
       latest:
