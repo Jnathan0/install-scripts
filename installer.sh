@@ -5,6 +5,59 @@ DIST_VER=$(lsb_release -r | cut -d: -f2 | sed 's/[[:blank:]]//g')
 TEMPLATE_FILES=()
 USER_FILES=()
 
+## MENU ##
+if [ $# == 0 ]; then
+    if [ "$(ls templates/ | wc -l)" -ge 1 ]; then
+        declare -A templates_array
+        MENU_TEMPLATES=($(ls templates/))
+        i=1
+        echo -e "Templates Found\nPlease select template to use:"
+        for file in ${MENU_TEMPLATES[@]}; do
+            templates_array[$i]=$file
+            echo "$i) $file"
+            let "i++"
+        done
+        read -n 1 -p "Select Number: " input;
+        echo -e "\n${templates_array[$input]} selected..."
+        TEMPLATE_FILES+=("${templates_array[$input]}")
+    fi
+    if [ "$(ls dist/ | wc -l)" -ge 1 ]; then
+        declare -A dist_array
+        DIST_FLAVORS=($(ls dist/ | cut -f1 -d.))
+        i=1
+        echo -e "Distribution Override? Found following values:"
+        for file in ${DIST_FLAVORS[@]}; do
+            dist_array[$i]=$file
+            echo "$i) $file"
+            let "i++"
+        done
+        echo "S) Skip Selection"
+        read -n 1 -p "Select Number or S to skip: " input;
+        case $input in
+            s|S)
+                echo -e "\nSkipping dist override";;
+            *)
+                echo -e "\n${dist_array[$input]} selected..."
+                DIST_ID=("${dist_array[$input]}")
+        esac
+    fi
+    read -n 1 -p "OS version override? (Y/N): " input;
+    CUSTOM_VERSION_BOOL=''
+    case $input in
+        y|Y)
+            CUSTOM_VERSION_BOOL=true
+            ;;
+        n|N)
+            CUSTOM_VERSION_BOOL=false
+            ;;
+    esac
+    if [ $CUSTOM_VERSION_BOOL == "true" ]; then
+        echo -e "\n"
+        read -p "Enter OS version: " input;
+        DIST_VER="$input"
+    fi
+fi
+## END MENU ##
 
 function show_help() {
     cat >&2 <<EOF
@@ -39,7 +92,7 @@ while [ "$#" -gt 0 ]; do
             DIST_ID=$2
             shift 2
             ;;
-        -k|--version-verride)
+        -k|--version-override)
             DIST_VER=$2
             shift 2
             ;;
@@ -81,9 +134,6 @@ done
 #     OS=$(uname -s)
 #     VER=$(uname -r)
 # fi
-
-
-
 
 
 ./required/$DIST_ID-prereqs.sh
