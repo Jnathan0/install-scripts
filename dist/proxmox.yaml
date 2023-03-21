@@ -1,5 +1,12 @@
 version:
   "7.3":
+    build-essential:
+      default: latest
+      latest:
+        install: |-
+          apt update 
+          apt upgrade -y
+          apt install -y build-essential
     deb-files:
       default: latest
       latest:
@@ -29,3 +36,44 @@ version:
           # added so windows doesnt crash
           echo "options kvm ignore_msrs=1" > /etc/modprobe.d/kvm.conf
           set +x
+    templates:
+      default: ubuntu-server-2044
+      ubuntu-server-2044:
+        install: |
+          mkdir -p /cloud-init-images
+          cd /cloud-init-images
+          wget https://cloud-images.ubuntu.com/jammy/current/jammy-server-cloudimg-amd64-disk-kvm.img
+          qm create 9000 --name "ubuntu-server-2204-cloudinit-template" --memory 2048 --net0 virtio,bridge=vmbr0
+          qm importdisk 9000 /cloud-init-images/jammy-server-cloudimg-amd64-disk-kvm.img local-lvm
+          qm set 9000 --scsihw virtio-scsi-pci --scsi0 local-lvm:vm-9000-disk-0
+          qm set 9000 --boot c --bootdisk scsi0
+          qm set 9000 --ide2 local-lvm:cloudinit
+          qm set 9000 --serial0 socket -vga serial0
+          qm template 9000
+    go:
+      default: "1.20.2"
+      "1.20.2":
+        install: |
+          wget https://go.dev/dl/go1.20.2.linux-amd64.tar.gz
+          tar -C /usr/local -xzf go1.20.2.linux-amd64.tar.gz && rm go1.20.2.linux-amd64.tar.gz
+          export PATH=$PATH:/usr/local/go/bin
+          echo $PATH >> /etc/profile
+    terraform:
+      default: "1.4.2"
+      "1.4.2":
+        install: |
+          cd /tmp
+          wget https://releases.hashicorp.com/terraform/1.4.2/terraform_1.4.2_linux_amd64.zip
+          unzip terraform_1.4.2_linux_amd64.zip && rm terraform_1.4.2_linux_amd64.zip
+          mv terraform /usr/local/bin/
+    terraform-provider-plugin:
+      default: latest
+      latest:
+        install: |
+          git clone https://github.com/Telmate/terraform-provider-proxmox.git && cd terraform-provider-proxmox
+          go install github.com/Telmate/terraform-provider-proxmox/cmd/terraform-provider-proxmox
+          go install github.com/Telmate/terraform-provider-proxmox/cmd/terraform-provisioner-proxmox
+          make
+          mkdir ~/.terraform.d/plugins
+          cp bin/terraform-provider-proxmox ~/.terraform.d/plugins
+          cp bin/terraform-provisioner-proxmox ~/.terraform.d/plugins
