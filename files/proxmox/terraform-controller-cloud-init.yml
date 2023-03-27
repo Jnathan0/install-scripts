@@ -68,7 +68,7 @@ runcmd:
 
     [Service]
     Type=oneshot
-    RemainAfterExit=no
+    RemainAfterExit=yes
     WorkingDirectory=/gaia/
     ExecStart=docker compose up -d
     ExecStop=docker compose down
