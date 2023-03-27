@@ -1,2 +1,3 @@
 # install-scripts
-Repo to hold yaml to install utils and apps via config as code
+Repo to hold yaml templates to bootstrap utils and apps via config as code
+`installer.sh` runs as the driver

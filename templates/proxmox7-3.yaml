@@ -6,3 +6,7 @@ iommu:
   post-install: |-
     echo IOMMU configured, please visit https://pve.proxmox.com/wiki/PCI_Passthrough#GPU_Passthrough for PCI configuration instructions.
     echo A Restart is suggested to apply configuration....
+templates:
+  version: ubuntu-server-2044
+terraform-controller:
+  version: latest

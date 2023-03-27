@@ -43,13 +43,21 @@ version:
           mkdir -p /cloud-init-images
           cd /cloud-init-images
           wget https://cloud-images.ubuntu.com/jammy/current/jammy-server-cloudimg-amd64-disk-kvm.img
-          qm create 9000 --name "ubuntu-server-2204-cloudinit-template" --memory 2048 --net0 virtio,bridge=vmbr0
+          qm create 9000 --name "ubuntu-server-2204-cloudinit-template" --memory 2048 --net0 virtio,bridge=vmbr0,ip=dhcp
           qm importdisk 9000 /cloud-init-images/jammy-server-cloudimg-amd64-disk-kvm.img local-lvm
-          qm set 9000 --scsihw virtio-scsi-pci --scsi0 local-lvm:vm-9000-disk-0
+          qm set 9000 --scsihw virtio-scsi-pci --scsi0 local-lvm:vm-9000-disk-0,size=16G
           qm set 9000 --boot c --bootdisk scsi0
           qm set 9000 --ide2 local-lvm:cloudinit
           qm set 9000 --serial0 socket -vga serial0
           qm template 9000
+    terraform-controller:
+      default: latest
+      latest:
+        install: |
+          cp ../files/proxmox/terraform-controller-cloud-init.yml /vz/snippets
+          qm clone 9000 10000 --full true --name terraform-controller
+          qm set 10000 --cicustom "user=local:snippets/9001-cloud-init.yml" --agent enabled=1 --scsi0 local-lvm:vm-10000-disk-0,size=32G --cores 2
+          qm start 10000
     go:
       default: "1.20.2"
       "1.20.2":
