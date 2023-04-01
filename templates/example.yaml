@@ -7,4 +7,3 @@ python3:
     echo this is the post install phase
     echo this gets evaluated after the main install for the dependency finishes
 spotify: # setting only the root key will install with the 'default' version
-

@@ -59,6 +59,15 @@ version:
           qm set 10000 --cicustom "user=local:snippets/terraform-controller-cloud-init.yml" --agent enabled=1 --scsi0 local-lvm:vm-10000-disk-0 --cores 2 --onboot 1 --ipconfig0 ip=dhcp
           qm resize 10000 scsi0 +14G
           qm start 10000
+    packer-controller:
+      default: latest
+      latest:
+        install: |
+          cp files/proxmox/packer-controller-cloud-init.yml /var/lib/vz/snippets/packer-controller-cloud-init.yml
+          qm clone 9000 11000 --full true --name packer-controller
+          qm set 11000 --cicustom "user=local:snippets/packer-controller-cloud-init.yml" --agent enabled=1 --scsi0 local-lvm:vm-11000-disk-0 --cores 2 --onboot 1 --ipconfig0 ip=dhcp
+          qm resize 11000 scsi0 +14G
+          qm start 11000
     go:
       default: "1.20.2"
       "1.20.2":

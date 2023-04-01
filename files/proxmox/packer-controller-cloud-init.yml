@@ -1,0 +1,47 @@
+#cloud-config
+# reference docs can be found here:
+# https://cloudinit.readthedocs.io/en/latest/reference/examples.html#including-users-and-groups
+hostname: packer-controller
+manage_etc_hosts: true
+users:
+  - name: user
+    sudo: ALL=(ALL) NOPASSWD:ALL
+    groups: users, admin, docker
+    ssh_authorized_keys:
+      - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQC5z3wBSpotGkoY+BFJG/Dk+EhQp1w3ZxjOC+ugCR/MxE/XPHAkKhqyWoQi/EM13i82QZ2TcigktrrA9W498vicWTqqMOC43lpwfoU2stMxCWyL1yUKF6yUM1wFDO1QaVjH1LAKLW3mxW3ljYyyJNZaafClCFJUb5OtR2do45o2qo0b2wyRcz31DX2Xm7GcZwLFsVwYo60luB5fztL4tIy70iYTJY2DKmQNAwgyOrT9UdwM6NycKYSZBtnFQcJyaTyKkj6m19nGC7fdtlozd8BqZl5wSdAu8m9l+lAUf3Nv4sVZBcNsBwkUHPn9Nw7L5k9OfjPWhEmN/LLgwmtFijFslrfxUmCS57holYZDTsA25j5RX+ku09Fkc9FHF863D3nKA1QQna3sG0nAoELVjZi0RlMlPCUq8tfLxzP710Ngf2S3gJuwKSgG+ucbcEBZpSpxfzLvnamh/mDB1eEq8BBONTf9Od/ejW0AJvphEDwecU6uKschTGStUoiYrq3TPlk= user@DESKTOP-SBI28UO
+    shell: /bin/bash
+ssh:
+  emit_keys_to_console: false
+locale: en_US.UTF-8
+timezone: America/Los_Angeles
+package_upgrade: true
+package_reboot_if_required: false
+packages:
+  - qemu-guest-agent
+  - neofetch
+  - software-properties-common
+  - curl
+  - gnupg2
+  - git
+  - ca-certificates
+  - lsb-release
+  - apt-transport-https
+  - git
+apt:
+  preserve_sources_list: true
+ntp:
+  enabled: true
+  ntp_client: chrony
+runcmd:
+  # runcmd runs commands only on first boot
+  # enable qemu guest agent service
+  - systemctl enable qemu-guest-agent
+  - systemctl start qemu-guest-agent
+  # install packer
+  - curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo gpg --dearmor -o /etc/apt/trusted.gpg.d/hashicorp.gpg
+  - sudo apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main"
+  - sudo apt update
+  - sudo apt install -y packer
+  # download personal repo containing packer templates
+  - cd /
+  - sudo git clone https://github.com/Jnathan0/proxmox-packer.git
