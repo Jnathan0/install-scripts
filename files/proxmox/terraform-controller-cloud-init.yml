@@ -49,27 +49,24 @@ runcmd:
   # enable qemu guest agent service
   - systemctl enable qemu-guest-agent
   - systemctl start qemu-guest-agent
-  # install go, prereq for terraform
-  - apt update
-  - apt install -y golang-go
-  # install terraform
-  - curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo apt-key add -
-  - sudo apt-add-repository "deb [arch=$(dpkg --print-architecture)] https://apt.releases.hashicorp.com $(lsb_release -cs) main"
+  # install ansible 
   - sudo apt update
-  - sudo apt install -y terraform
-  # install gaia web UI for terraform, create systemd service to persist
+  - sudo apt install software-properties-common
+  - sudo add-apt-repository --yes --update ppa:ansible/ansible
+  - sudo apt install -y ansible
+  # install gaia web app for terraform, create systemd service to persist
   - |
-    cd / && git clone https://github.com/gaia-app/gaia.git &&
-    cat <<'EOF' >>/etc/systemd/system/gaia.service
+    cd /home/user && git clone https://github.com/gaia-app/gaia.git &&
+    sudo cat <<'EOF' >>/etc/systemd/system/gaia.service
     [Unit]
-    Description=gaia UI service for terraform
+    Description=gaia app service for terraform and webui
     After=docker.service network-online.target
     Requires=docker.service network-online.target
 
     [Service]
     Type=oneshot
     RemainAfterExit=yes
-    WorkingDirectory=/gaia/
+    WorkingDirectory=/home/user/gaia/
     ExecStart=docker compose up -d
     ExecStop=docker compose down
 

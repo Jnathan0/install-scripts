@@ -1,6 +1,6 @@
 templates:
   version: ubuntu-server-2044
-terraform-controller:
-  version: latest
 packer-controller:
+  version: latest
+terraform-controller:
   version: latest

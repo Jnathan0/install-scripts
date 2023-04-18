@@ -46,9 +46,10 @@ version:
           qm create 9000 --name "ubuntu-server-2204-cloudinit-template" --memory 2048 --net0 virtio,bridge=vmbr0
           qm importdisk 9000 /cloud-init-images/jammy-server-cloudimg-amd64-disk-kvm.img local-lvm
           qm set 9000 --scsihw virtio-scsi-pci --scsi0 local-lvm:vm-9000-disk-0
-          qm set 9000 --boot c --bootdisk scsi0
-          qm set 9000 --ide2 local-lvm:cloudinit
+          qm set 9000 --ide2 local-lvm:cloudinit --size 
           qm set 9000 --serial0 socket -vga serial0
+          qm set 9000 --efidisk0 local-lvm:0
+          qm set 9000 --boot order=scsi0
           qm template 9000
     terraform-controller:
       default: latest
@@ -59,6 +60,15 @@ version:
           qm set 10000 --cicustom "user=local:snippets/terraform-controller-cloud-init.yml" --agent enabled=1 --scsi0 local-lvm:vm-10000-disk-0 --cores 2 --onboot 1 --ipconfig0 ip=dhcp
           qm resize 10000 scsi0 +14G
           qm start 10000
+    tf-controller-database:
+        default: latest
+        latest:
+            install: |
+          cp files/proxmox/terraform-controller-cloud-init.yml /var/lib/vz/snippets/terraform-controller-cloud-init.yml
+          qm clone 9000 10001 --full true --name terraform-controller
+          qm set 10001 --cicustom "user=local:snippets/terraform-controller-cloud-init.yml" --agent enabled=1 --scsi0 local-lvm:vm-10001-disk-0 --cores 2 --onboot 1 --ipconfig0 ip=dhcp
+          qm resize 10001 scsi0 +14G
+          qm start 10001
     packer-controller:
       default: latest
       latest:
